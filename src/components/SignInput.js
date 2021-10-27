@@ -19,16 +19,33 @@ const Input = styled.TextInput`
     font-size: 16px;
     margin-left: 10px;
 `;
+
+const renderInput = (props) => {
+    if (props.numeric) {
+        return <Input
+            placeholder={props.placeholder}
+            placeholderTextColor="#969696"
+            value={props.value}
+            onChangeText={props.onChangeText}
+            secureTextEntry={props.password}
+            keyboardType = 'numeric'
+        />
+    } else {
+        return <Input 
+            placeholder={props.placeholder}
+            placeholderTextColor="#969696"
+            value={props.value}
+            onChangeText={props.onChangeText}
+            secureTextEntry={props.password}
+        />
+    }
+}
 export default props => {
+
+    
     return (
         <InputArea>
-            <Input 
-                placeholder={props.placeholder}
-                placeholderTextColor="#969696"
-                value={props.value}
-                onChangeText={props.onChangeText}
-                secureTextEntry={props.password}
-                />
+            { renderInput(props) }
         </InputArea>
     );
 }

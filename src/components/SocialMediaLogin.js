@@ -12,19 +12,18 @@ export const SocialMediaArea = styled.View`
     margin-bottom: 10px;
     flex-direction: row;
     align-items: center;
-    display: flex;
-    justify-content: space-between;
 `;
 
 export const SocialMediaButton = styled.TouchableOpacity`
     height: 46px;
     background: #323232;
     border-radius: 10px;
-    width: 110px;
+    width: 31%;
     margin-bottom: 15px;
     flex-wrap: wrap;
     align-content: center
     justify-content: center;
+    margin: 0 6px;
 `;
 
 export default props => {

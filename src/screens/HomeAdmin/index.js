@@ -24,7 +24,7 @@ export default () => {
             <Image style={styles.image} source={require('../../assets/logo.png')} />
             <Text message={'Área do administrador'}/>
             <ServicesArea>
-                <CustomButton onPress={() => navigation.navigate('Servicos') }>
+                <CustomButton onPress={() => navigation.navigate('ServicosListAdmin') }>
                     <CustomButtonText>Serviços</CustomButtonText>
                 </CustomButton>
                 <CustomButton>
