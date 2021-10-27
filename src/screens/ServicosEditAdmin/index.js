@@ -15,50 +15,50 @@ import SignInput from '../../components/SignInput';
 
 export default props => {
 
-    const [serviceTimeHours, setServiceTimeHours] = useState('1');
-    const [serviceTimeMinutes, setServiceTimeMinutes] = useState('1');
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
 
-    const [serviceName, setServiceName] = useState('');
-    const [serviceValue, setServiceValue] = useState('');
+  const [serviceName, setServiceName] = useState('');
+  const [serviceValue, setServiceValue] = useState('');
 
-    const { createService } = useContext(ServicesContext);
+  const { createService } = useContext(ServicesContext);
 
-    return (
-        
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={styles.container}>
-             <StatusBar
-                animated={true}
-                barStyle='dark-content'/>
-                <InputArea>
-                    <SignInput
-                        placeholder='Nome do serviço'
-                        value={serviceName}
-                        onChangeText={t => setServiceName(t)}
-                    />
-                    <TitleTime>Tempo do serviço:</TitleTime>
-                    <TimePicker 
-                        value={{serviceTimeHours, serviceTimeMinutes}} 
-                        onChange={value => {
-                            setServiceTimeHours(value.serviceTimeHours);
-                            setServiceTimeMinutes(value.serviceTimeMinutes);
-                        }} 
-                        hoursUnit="hrs"
-                        minutesUnit="min"
-                        />
-                    <SignInput
-                        placeholder='Valor do serviço'
-                        value={serviceValue}
-                        onChangeText={t => setServiceValue(t)}
-                        numeric={true}
-                    />
-                    <CustomButton onPress={async () => await createService(serviceName, serviceTimeHours, serviceTimeMinutes, serviceValue, props.navigation)}>
-                        <CustomButtonText>Cadastrar</CustomButtonText>
-                    </CustomButton>
-                </InputArea>
-                </KeyboardAvoidingView>
-    )
+  return (
+
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}>
+      <StatusBar
+        animated={true}
+        barStyle='dark-content' />
+      <InputArea>
+        <SignInput
+          placeholder='Nome do serviço'
+          value={serviceName}
+          onChangeText={t => setServiceName(t)}
+        />
+        <TitleTime>Tempo do serviço:</TitleTime>
+        <TimePicker
+          value={{ hours, minutes }}
+          onChange={value => {
+            setHours(value.hours);
+            setMinutes(value.minutes);
+          }}
+          hoursUnit="hrs"
+          minutesUnit="min"
+        />
+        <SignInput
+          placeholder='Valor do serviço'
+          value={serviceValue}
+          onChangeText={t => setServiceValue(t)}
+          numeric={true}
+        />
+        <CustomButton onPress={async () => await createService(serviceName, hours, minutes, serviceValue, props.navigation)}>
+          <CustomButtonText>Cadastrar</CustomButtonText>
+        </CustomButton>
+      </InputArea>
+    </KeyboardAvoidingView>
+  )
 }
 
 const styles = StyleSheet.create({

@@ -2,6 +2,21 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 
+const formatTime = (hours, minutes) => {
+  if (hours != null && minutes != null) {
+    let valueHours = Number(hours);
+    let valueMinutes = Number(minutes);
+    if (valueHours < 10) {
+      valueHours = `0${hours}`;
+    }
+    if (valueMinutes < 10) {
+      valueMinutes = `0${minutes}`;
+    }
+    return `${valueHours}:${valueMinutes}`;
+  }
+  return null;
+};
+
 const ListItem = ({ data, deleteAction, listAction }) => {
   return (
     <TouchableOpacity style={styles.item}>
@@ -11,8 +26,7 @@ const ListItem = ({ data, deleteAction, listAction }) => {
       <View style={styles.infoContainer}>
         <View style={styles.timeContainer}>
           <Text style={styles.itemP2}>Tempo</Text>
-          <Text style={styles.itemP1}>{data.serviceTimeHours} hrs</Text>
-          <Text style={styles.itemP1}>{data.serviceTimeMinutes} min</Text>
+          <Text style={styles.itemP1}>{formatTime(data.serviceTimeHours, data.serviceTimeMinutes)}</Text>
         </View>
         <View>
           <Text style={styles.itemP2}>Valor</Text>
