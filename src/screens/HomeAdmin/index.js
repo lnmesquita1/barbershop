@@ -1,21 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { Container } from './styles';
 import Tabs from '../../components/Tabs';
+import LineChart from '../../components/charts/LineChart';
+import Modal from '../../components/Modal';
+import Card from '../../components/Card';
 import { Icon } from 'react-native-elements';
 import AppLoading from 'expo-app-loading';
-import { useFonts, Roboto_500Medium } from '@expo-google-fonts/roboto';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
-import { Dimensions } from 'react-native';
+import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
 const iconColor = 'black';
+const weekAttendances = [8, 10, 15, 9, 12, 19];
+const daysOfWeek = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
 
 export const ContainerDashboard = styled.View`
   display: flex;
@@ -36,18 +32,26 @@ export const WelcomeMessage = styled.Text`
   text-transform: uppercase;
 `;
 
-export const Chart = styled.View`
-  background: #FFFFFF;
+export const RevenueTitle = styled.Text`
+  display: flex;
+  line-height: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 13px;
   margin-top: 20px;
-  height: 240px;
-  width: 100%;
-  border-radius: 20px;
-  box-shadow: 0px 0px 10px #EEF0F3;
+`;
+
+export const RevenueValue = styled.Text`
+  font-size: 37px;
+  line-height: 43px;
+  text-transform: uppercase;
+  margin-top: 5px;
 `;
 
 export default () => {
+  const [modalVisible, setModalVisible] = useState(false);
   let [fontsLoaded] = useFonts({
-    Roboto_500Medium,
+    Roboto_400Regular,
   });
 
   if (!fontsLoaded) {
@@ -57,52 +61,28 @@ export default () => {
       <Container>
         <ContainerDashboard>
           <HeaderArea>
-            <WelcomeMessage style={{ fontFamily: 'Roboto_500Medium', fontSize: 17 }}>Bem vindo, Lucas</WelcomeMessage>
+            <WelcomeMessage style={{ fontFamily: 'Roboto_400Regular', fontSize: 17 }}>Bem vindo, Lucas</WelcomeMessage>
             <Icon name='cog' type='font-awesome' color={iconColor} />
           </HeaderArea>
-          <Chart>
-          <LineChart
-            data={{
-              labels: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
-              datasets: [
-                {
-                  data: [
-                    8,
-                    10,
-                    15,
-                    9,
-                    12,
-                    19
-                  ]
-                }
-              ]
-            }}
-            width={Dimensions.get("window").width - 60} // from react-native
-            height={220}
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundGradientFrom: "#0000fff",
-              backgroundGradientTo: "#0000fff",
-              decimalPlaces: 0,
-              color:  () => `#323232`,
-              labelColor: () => `#323232`,
-              style: {
-                borderRadius: 0
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#323232"
-              }
-            }}
-            bezier
-            style={{
-              marginVertical: 15,
-              borderRadius: 16,
-              left: -10
-            }}
+          <RevenueTitle>Saldo</RevenueTitle>
+          <RevenueValue>R$ 3650,00</RevenueValue>
+          <Card
+            title='Atendimentos na semana'
+            titleValue={weekAttendances.reduce((accumulator, a) => { return accumulator + a }, 0)}
+            onPressAction={() => { setModalVisible(true); }}
+          >
+            <LineChart
+              labels={daysOfWeek}
+              data={weekAttendances}
+            />
+          </Card>
+          <Modal
+            title='Teste modal'
+            modalVisible={modalVisible}
+            onRequestClose={() => {setModalVisible(!modalVisible);}}
+            onHideModal={() => {setModalVisible(!modalVisible);}}
+            hideModalText='Fechar modal'
           />
-          </Chart>
         </ContainerDashboard>
         <Tabs></Tabs>
       </Container>
