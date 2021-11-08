@@ -43,7 +43,7 @@ export default props => {
     return (
       <Container>
         <TabsContainer>
-          <TabItem>
+          <TabItem onPress={() => navigation.navigate('ScheduleAdmin')}>
             <Icon
               name='calendar'
               type='font-awesome'
