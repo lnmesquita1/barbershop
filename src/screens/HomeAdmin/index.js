@@ -61,7 +61,7 @@ export default () => {
       <Container>
         <ContainerDashboard>
           <HeaderArea>
-            <WelcomeMessage style={{ fontFamily: 'Roboto_400Regular', fontSize: 17 }}>Bem vindo, Lucas</WelcomeMessage>
+            <WelcomeMessage style={{ fontFamily: 'Roboto_400Regular', fontSize: 17 }}>Bem vindo, Xucas</WelcomeMessage>
             <Icon name='cog' type='font-awesome' color={iconColor} />
           </HeaderArea>
           <RevenueTitle>Saldo</RevenueTitle>
