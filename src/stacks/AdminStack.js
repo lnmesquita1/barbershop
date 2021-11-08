@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements'
 import HomeAdmin from '../screens/HomeAdmin';
 import ServicosListAdmin from '../screens/ServicosListAdmin';
 import ServicosEditAdmin from '../screens/ServicosEditAdmin';
+import ScheduleAdmin from '../screens/ScheduleAdmin';
 import { Button } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -33,6 +34,21 @@ export default props => {
                     <AddArea>
                         <Icon
                         name='plus'
+                        type='font-awesome'
+                        color='#323232'
+                        onPress={() => navigation.navigate('ServicosEditAdmin') } />
+                    </AddArea>
+                )
+            })}/>
+        <Stack.Screen 
+            name="ScheduleAdmin" 
+            component={ScheduleAdmin} 
+            options={({ navigation, route }) => ({
+                headerTitle: 'Agenda',
+                headerRight: () => (
+                    <AddArea>
+                        <Icon
+                        name='cog'
                         type='font-awesome'
                         color='#323232'
                         onPress={() => navigation.navigate('ServicosEditAdmin') } />
