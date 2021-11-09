@@ -1,26 +1,23 @@
 import React, { createContext, useState } from 'react';
 import { database } from '../config/firebase';
 
-export const ServicesContext = createContext();
+export const ProfessionalsContext = createContext();
 
-export const ServicesProvider = (props) => {
-  const [services, setServices] = useState([]);
+export const ProfessionalsProvider = (props) => {
+  const [professionals, setProfessionals] = useState([]);
   const [loading, setLoading] = useState(false);
 
   return (
-    <ServicesContext.Provider
+    <ProfessionalsContext.Provider
       value={{
         loading,
-        services,
-        createService: (serviceName, serviceTimeHours, serviceTimeMinutes, serviceValue, navigation) => {
+        professionals,
+        createProfessional: (navigation) => {
           try {
             setLoading(true);
-            const newServiceKey = database.ref().child('services').push().key;
-            database.ref('services/' + newServiceKey).set({
-              serviceName: serviceName,
-              serviceTimeHours: serviceTimeHours,
-              serviceTimeMinutes: serviceTimeMinutes,
-              serviceValue: serviceValue
+            const newProfessionalKey = database.ref().child('professionals').push().key;
+            database.ref('professionals/' + newProfessionalKey).set({ 
+              teste: 'teste'
             }).then(() => {
               navigation.navigate('ServicosListAdmin');
               setLoading(false);
@@ -30,9 +27,9 @@ export const ServicesProvider = (props) => {
             console.warn(error);
           }
         },
-        listService: () => {
+        listProfessionals: () => {
           try {
-            database.ref().child('services').get().then(list => {
+            database.ref().child('professionals').get().then(list => {
               if (list.exists()) {
                 const keys = Object.keys(list.val());
                 const items = [];
@@ -40,16 +37,16 @@ export const ServicesProvider = (props) => {
                   item.key = keys[index];
                   items.push(item)
                 });
-                setServices(items);
+                setProfessionals(items);
               }
             });
           } catch (error) {
             console.warn(error);
           }
         },
-        deleteService: async (key) => {
+        deleteProfessional: async (key) => {
           try {
-            const item = database.ref().child('services/' + key);
+            const item = database.ref().child('professionals/' + key);
             if (item) {
               item.remove();
             }
@@ -59,8 +56,8 @@ export const ServicesProvider = (props) => {
         }
       }}>
       {props.children}
-    </ServicesContext.Provider>
+    </ProfessionalsContext.Provider>
   )
 }
 
-export default ServicesProvider;
+export default ProfessionalsProvider;
