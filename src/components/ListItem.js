@@ -17,9 +17,9 @@ const formatTime = (hours, minutes) => {
   return null;
 };
 
-const ListItem = ({ data, deleteAction, listAction }) => {
+const ListItem = ({ data, deleteAction, listAction, editAction }) => {
   return (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity onPress={editAction} style={styles.item}>
       <View style={styles.titleContainer}>
         <Text style={styles.itemP1}>{data.serviceName}</Text>
       </View>

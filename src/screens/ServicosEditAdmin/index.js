@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/core';
 import { StyleSheet, ImageBackground, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
 import { TimePicker } from 'react-native-simple-time-picker';
@@ -14,6 +14,15 @@ import {
 import SignInput from '../../components/SignInput';
 
 export default props => {
+  useEffect(() => {
+    const params = props.route.params;
+    if (params) {
+      setServiceName(params.serviceName);
+      setServiceValue(params.serviceValue);
+      setHours(params.serviceTimeHours);
+      setMinutes(params.serviceTimeMinutes);
+    }
+}, []);
 
   const [hours, setHours] = useState(0);
   const [minutes, setMinutes] = useState(0);
@@ -53,7 +62,7 @@ export default props => {
           onChangeText={t => setServiceValue(t)}
           numeric={true}
         />
-        <CustomButton onPress={async () => await createService(serviceName, hours, minutes, serviceValue, props.navigation)}>
+        <CustomButton onPress={async () => await createService(props.route.params?.key, serviceName, hours, minutes, serviceValue, props.navigation)}>
           <CustomButtonText>Cadastrar</CustomButtonText>
         </CustomButton>
       </InputArea>
