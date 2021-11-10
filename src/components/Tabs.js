@@ -1,10 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Icon } from 'react-native-elements';
 import styled from 'styled-components/native';
-import { useNavigation } from '@react-navigation/core';
-import { AuthContext } from '../config/AuthProvider';
-
-const iconColor = '#fff';
 
 export const Container = styled.View`
   height: 170px;
@@ -37,61 +33,23 @@ export const TabText = styled.Text`
 `;
 
 export default props => {
-  const navigation = useNavigation();
-  const { logout } = useContext(AuthContext);
-
     return (
       <Container>
         <TabsContainer>
-          <TabItem onPress={() => navigation.navigate('ScheduleAdmin')}>
-            <Icon
-              name='calendar'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Agenda</TabText>
-          </TabItem>
-          <TabItem onPress={() => navigation.navigate('ServicosListAdmin')}>
-            <Icon
-              name='cut'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Serviços</TabText>
-          </TabItem>
-          <TabItem>
-            <Icon
-              name='male'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Profissionais</TabText>
-          </TabItem>
-          <TabItem>
-            <Icon
-              name='address-card'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Clientes</TabText>
-          </TabItem>
-          <TabItem>
-            <Icon
-              name='shopping-cart'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Produtos</TabText>
-          </TabItem>
-          <TabItem>
-            <Icon
-              name='money'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Financeiro</TabText>
-          </TabItem>
-          <TabItem onPress={ () => logout()}>
-            <Icon
-              name='sign-out'
-              type='font-awesome'
-              color={iconColor} />
-            <TabText>Sair</TabText>
-          </TabItem>
+          {
+            props.tabProperties.map((item, index) => {
+              return (
+                <TabItem key={index} onPress={ item.navigateAction }>
+                  <Icon
+                    name={item.iconName}
+                    type='font-awesome-5'
+                    color={item.iconColor}
+                    solid={true} />
+                  <TabText style={item.textStyle ? item.textStyle : { fontSize: 13 } }>{item.text}</TabText>
+                </TabItem>
+              );
+            }) 
+          }
         </TabsContainer>
       </Container>
     );
