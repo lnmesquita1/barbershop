@@ -12,11 +12,14 @@ export const ServicesProvider = (props) => {
       value={{
         loading,
         services,
-        createService: (serviceName, serviceTimeHours, serviceTimeMinutes, serviceValue, navigation) => {
+        createService: (key, serviceName, serviceTimeHours, serviceTimeMinutes, serviceValue, navigation) => {
           try {
             setLoading(true);
-            const newServiceKey = database.ref().child('services').push().key;
-            database.ref('services/' + newServiceKey).set({
+            let serviceKey = key;
+            if (!serviceKey) {
+              serviceKey = database.ref().child('services').push().key;
+            }
+            database.ref('services/' + serviceKey).set({
               serviceName: serviceName,
               serviceTimeHours: serviceTimeHours,
               serviceTimeMinutes: serviceTimeMinutes,
