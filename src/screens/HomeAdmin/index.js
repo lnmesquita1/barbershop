@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigation } from '@react-navigation/core';
 import styled from 'styled-components/native';
 import { Container } from './styles';
 import Tabs from '../../components/Tabs';
@@ -7,6 +8,7 @@ import Modal from '../../components/Modal';
 import Card from '../../components/Card';
 import { Icon } from 'react-native-elements';
 import AppLoading from 'expo-app-loading';
+import { AuthContext } from '../../config/AuthProvider';
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
 const iconColor = 'black';
@@ -49,7 +51,49 @@ export const RevenueValue = styled.Text`
 `;
 
 export default () => {
+  const navigation = useNavigation();
+  const { logout } = useContext(AuthContext);
+
+  const tabProperties = [
+    {
+      iconName: 'calendar',
+      iconColor: '#fff',
+      text: 'Agenda',
+      navigateAction: () => { navigation.navigate('ScheduleAdmin') } 
+    },
+    {
+      iconName: 'cut',
+      iconColor: '#fff',
+      text: 'Serviços',
+      navigateAction: () => { navigation.navigate('ServicosListAdmin') }
+    },
+    {
+      iconName: 'address-card',
+      iconColor: '#fff',
+      text: 'Profissionais',
+      navigateAction: () => {}
+    },
+    {
+      iconName: 'shopping-cart',
+      iconColor: '#fff',
+      text: 'Produtos',
+      navigateAction: () => {}
+    },
+    {
+      iconName: 'hand-holding-usd',
+      iconColor: '#fff',
+      text: 'Financeiro',
+      navigateAction: () => {}
+    },
+    {
+      iconName: 'sign-out-alt',
+      iconColor: '#fff',
+      text: 'Sair',
+      navigateAction: () => logout()
+    },
+  ];
   const [modalVisible, setModalVisible] = useState(false);
+
   let [fontsLoaded] = useFonts({
     Roboto_400Regular,
   });
@@ -84,7 +128,7 @@ export default () => {
             hideModalText='Fechar modal'
           />
         </ContainerDashboard>
-        <Tabs></Tabs>
+        <Tabs tabProperties={tabProperties}></Tabs>
       </Container>
     )
   }
