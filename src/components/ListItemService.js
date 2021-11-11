@@ -17,7 +17,7 @@ const formatTime = (hours, minutes) => {
   return null;
 };
 
-const ListItem = ({ data, deleteAction, listAction, editAction }) => {
+const ListItemService = ({ data, deleteAction, listAction, editAction }) => {
   return (
     <TouchableOpacity onPress={editAction} style={styles.item}>
       <View style={styles.titleContainer}>
@@ -94,4 +94,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListItem;
+export default ListItemService;

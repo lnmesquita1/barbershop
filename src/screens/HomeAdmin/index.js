@@ -71,7 +71,7 @@ export default () => {
       iconName: 'address-card',
       iconColor: '#fff',
       text: 'Profissionais',
-      navigateAction: () => {}
+      navigateAction: () => { navigation.navigate('ProfessionalsListAdmin') }
     },
     {
       iconName: 'shopping-cart',

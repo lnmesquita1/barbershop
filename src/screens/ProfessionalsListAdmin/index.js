@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/core';
 import { StyleSheet, FlatList } from 'react-native';
-import { ServicesContext } from '../../config/ServicesProvider';
+import { ProfessionalsContext } from '../../config/ProfessionalsProvider';
 import { Container } from './styles';
-import ListItemService from '../../components/ListItemService';
+import ListItemProfessional from '../../components/ListItemProfessional';
 import Loading from '../../components/Loading';
 
 const styles = StyleSheet.create({
@@ -13,19 +13,16 @@ const styles = StyleSheet.create({
 });
 
 export default props => {
-  const { loading, listService, services, deleteService } = useContext(ServicesContext);
+  const { loading, listProfessionals, professionals, deleteProfessional } = useContext(ProfessionalsContext);
   const navigation = useNavigation();
-  const onPressItem = (item) => navigation.navigate('ServicosEditAdmin', {
-    serviceName: item.serviceName,
-    serviceTimeHours: item.serviceTimeHours,
-    serviceTimeMinutes: item.serviceTimeMinutes,
-    serviceValue: item.serviceValue,
+  const onPressItem = (item) => navigation.navigate('ProfessionalsEditAdmin', {
+    professionalName: item.professionalName,
     key: item.key
   });
 
   useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      listService();
+      listProfessionals();
     });
 
     return unsubscribe;
@@ -37,9 +34,9 @@ export default props => {
     return (
       <Container>
         <FlatList
-          data={services}
+          data={professionals}
           style={styles.list}
-          renderItem={({ item }) => <ListItemService editAction={ () => onPressItem(item)} data={item} deleteAction={deleteService} listAction={listService} />}
+          renderItem={({ item }) => <ListItemProfessional onPressAction={ () => onPressItem(item)} data={item} deleteAction={deleteProfessional} listAction={listProfessionals} />}
           keyExtractor={(item) => item.key}
         />
       </Container>
