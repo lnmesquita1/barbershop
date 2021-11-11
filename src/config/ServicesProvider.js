@@ -27,6 +27,8 @@ export const ServicesProvider = (props) => {
             }).then(() => {
               navigation.navigate('ServicosListAdmin');
               setLoading(false);
+            }).catch(() => {
+              setLoading(false);
             });
           } catch (error) {
             setLoading(false);
@@ -35,29 +37,38 @@ export const ServicesProvider = (props) => {
         },
         listService: () => {
           try {
+            setLoading(true);
             database.ref().child('services').get().then(list => {
+              const items = [];
               if (list.exists()) {
                 const keys = Object.keys(list.val());
-                const items = [];
                 Object.values(list.val()).map((item, index) => {
                   item.key = keys[index];
                   items.push(item)
                 });
-                setServices(items);
               }
+              setLoading(false);
+              setServices(items);
             });
           } catch (error) {
             console.warn(error);
+            setLoading(false);
           }
         },
         deleteService: async (key) => {
           try {
             const item = database.ref().child('services/' + key);
             if (item) {
-              item.remove();
+              setLoading(true);
+              item.remove().then(() => {
+                setLoading(false);
+              }).catch(() => {
+                setLoading(false);
+              });
             }
           } catch (error) {
             console.warn(error);
+            setLoading(false);
           }
         }
       }}>

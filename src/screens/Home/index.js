@@ -44,7 +44,7 @@ export default () => {
       iconName: 'calendar',
       iconColor: '#fff',
       text: 'Agendar',
-      navigateAction: () => { navigation.navigate('ScheduleAdmin') }
+      navigateAction: () => { navigation.navigate('ProfessionalsList') }
     },
     {
       iconName: 'calendar-check',

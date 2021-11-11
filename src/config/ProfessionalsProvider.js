@@ -12,14 +12,17 @@ export const ProfessionalsProvider = (props) => {
       value={{
         loading,
         professionals,
-        createProfessional: (navigation) => {
+        createProfessional: (key, professionalName, navigation) => {
           try {
             setLoading(true);
-            const newProfessionalKey = database.ref().child('professionals').push().key;
-            database.ref('professionals/' + newProfessionalKey).set({ 
-              teste: 'teste'
+            let professionalKey = key;
+            if (!professionalKey) {
+              professionalKey = database.ref().child('professionals').push().key;
+            }
+            database.ref('professionals/' + professionalKey).set({ 
+              professionalName: professionalName
             }).then(() => {
-              navigation.navigate('ServicosListAdmin');
+              navigation.navigate('ProfessionalsListAdmin');
               setLoading(false);
             });
           } catch (error) {
@@ -29,29 +32,38 @@ export const ProfessionalsProvider = (props) => {
         },
         listProfessionals: () => {
           try {
+            setLoading(true);
             database.ref().child('professionals').get().then(list => {
+              const items = [];
               if (list.exists()) {
                 const keys = Object.keys(list.val());
-                const items = [];
                 Object.values(list.val()).map((item, index) => {
                   item.key = keys[index];
                   items.push(item)
                 });
-                setProfessionals(items);
               }
+              setProfessionals(items);
+              setLoading(false);
             });
           } catch (error) {
             console.warn(error);
+            setLoading(false);
           }
         },
         deleteProfessional: async (key) => {
           try {
             const item = database.ref().child('professionals/' + key);
             if (item) {
-              item.remove();
+              setLoading(true);
+              item.remove().then(() => {
+                setLoading(false);
+              }).catch(() => {
+                setLoading(false);
+              })
             }
           } catch (error) {
             console.warn(error);
+            setLoading(false);
           }
         }
       }}>
