@@ -17,30 +17,54 @@ const formatTime = (hours, minutes) => {
   return null;
 };
 
-const ListItemService = ({ data, deleteAction, listAction, editAction }) => {
-  return (
-    <TouchableOpacity onPress={editAction} style={styles.item}>
-      <View style={styles.titleContainer}>
-        <Text style={styles.itemP1}>{data.serviceName}</Text>
+const renderTime = (serviceTimeHours, serviceTimeMinutes) => {
+  if (serviceTimeHours != null && serviceTimeMinutes != null) {
+    return (
+      <View style={styles.timeContainer}>
+        <Text style={styles.itemP2}>Tempo</Text>
+        <Text style={styles.itemP1}>{formatTime(serviceTimeHours, serviceTimeMinutes)}</Text>
       </View>
-      <View style={styles.infoContainer}>
-        <View style={styles.timeContainer}>
-          <Text style={styles.itemP2}>Tempo</Text>
-          <Text style={styles.itemP1}>{formatTime(data.serviceTimeHours, data.serviceTimeMinutes)}</Text>
-        </View>
-        <View>
-          <Text style={styles.itemP2}>Valor</Text>
-          <Text style={styles.itemP1}>R$ {data.serviceValue}</Text>
-        </View>
-        <View style={styles.trashArea}>
+    );
+  }
+}
+
+const renderValue = (serviceValue) => {
+  if (serviceValue != null) {
+    return (
+      <View>
+        <Text style={styles.itemP2}>Valor</Text>
+        <Text style={styles.itemP1}>R$ {serviceValue}</Text>
+      </View>
+    );
+  }
+}
+
+const renderDeleteArea = (deleteAction, listAction, key) => {
+  if (deleteAction != null) {
+    return (
+      <View style={styles.trashArea}>
           <Icon
             name='trash'
             type='font-awesome'
             color='#fa5252'
-            onPress={() => deleteAction(data.key).then(() => {
+            onPress={() => deleteAction(key).then(() => {
               listAction();
             })} />
         </View>
+    );
+  }
+}
+
+const ListItemService = ({ data, deleteAction, listAction, onPressAction }) => {
+  return (
+    <TouchableOpacity onPress={onPressAction} style={styles.item}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.itemP1}>{data.serviceName}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        {renderTime(data.serviceTimeHours, data.serviceTimeMinutes)}
+        {renderValue(data.serviceValue)}
+        {renderDeleteArea(deleteAction, listAction, data.key)}
       </View>
     </TouchableOpacity>
   );

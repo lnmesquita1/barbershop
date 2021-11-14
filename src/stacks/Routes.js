@@ -8,6 +8,7 @@ import AdminStack from './AdminStack';
 import { AuthContext } from './../config/AuthProvider';
 import ServicesProvider from '../config/ServicesProvider';
 import ProfessionalsProvider from '../config/ProfessionalsProvider';
+import ScheduleProvider from '../config/ScheduleProvider';
 import Loading from '../components/Loading';
 const auth = Firebase.auth();
 
@@ -46,7 +47,9 @@ export default () => {
     <NavigationContainer>
       <ServicesProvider>
         <ProfessionalsProvider>
-          {render()}
+          <ScheduleProvider>
+            {render()}
+          </ScheduleProvider>
         </ProfessionalsProvider>
       </ServicesProvider>
     </NavigationContainer>

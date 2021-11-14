@@ -39,7 +39,7 @@ export default props => {
         <FlatList
           data={services}
           style={styles.list}
-          renderItem={({ item }) => <ListItemService editAction={ () => onPressItem(item)} data={item} deleteAction={deleteService} listAction={listService} />}
+          renderItem={({ item }) => <ListItemService onPressAction={ () => onPressItem(item)} data={item} deleteAction={deleteService} listAction={listService} />}
           keyExtractor={(item) => item.key}
         />
       </Container>
