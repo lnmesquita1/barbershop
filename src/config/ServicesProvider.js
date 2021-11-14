@@ -35,7 +35,7 @@ export const ServicesProvider = (props) => {
             console.warn(error);
           }
         },
-        listService: () => {
+        listService: (serviceName = false) => {
           try {
             setLoading(true);
             database.ref().child('services').get().then(list => {
@@ -43,8 +43,12 @@ export const ServicesProvider = (props) => {
               if (list.exists()) {
                 const keys = Object.keys(list.val());
                 Object.values(list.val()).map((item, index) => {
-                  item.key = keys[index];
-                  items.push(item)
+                  if (serviceName) {
+                    items.push( { key: keys[index], serviceName: item.serviceName })
+                  } else {
+                    item.key = keys[index];
+                    items.push(item)
+                  }
                 });
               }
               setLoading(false);

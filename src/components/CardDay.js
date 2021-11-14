@@ -5,7 +5,7 @@ import AppLoading from 'expo-app-loading';
 
 export const CardDay = styled.TouchableOpacity`
   flex: 0 1 21%;
-  height: 90px;
+  height: 80px;
   background: #FFFFFF;
   border-radius: 15px;
   box-shadow: -4px 4px 15px rgba(0, 0, 0, 0.2);
@@ -34,7 +34,7 @@ export default props => {
     return <AppLoading />;
   } else {
     return (
-      <CardDay>
+      <CardDay style={{ backgroundColor: props.color }} onPress={props.onPressAction}>
         <Time style={{ fontFamily: 'Roboto_400Regular' }}>{props.time}</Time>
         <Status style={{ fontFamily: 'Roboto_400Regular' }}>{props.status}</Status>
       </CardDay>

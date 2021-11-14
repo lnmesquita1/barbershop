@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 export default props => {
   const { listProfessionals, professionals } = useContext(ProfessionalsContext);
   const navigation = useNavigation();
-  const onPressItem = (item) => navigation.navigate('Schedule', {
+  const onPressItem = (item) => navigation.navigate('ServicosList', {
     professionalId: item.key
   });
 

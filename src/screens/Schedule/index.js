@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import CardDay from '../../components/CardDay';
 import { Icon } from 'react-native-elements';
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
-import AppLoading from 'expo-app-loading';
+import { getDataExtenso, generateTimes, toStringDate } from '../../shared/ScheduleUtil';
+import { ScheduleContext } from '../../config/ScheduleProvider';
 import { 
   Container,
   ContainerCards,
@@ -11,54 +12,170 @@ import {
   DayOfWeek,
   DayOfMonth
 } from './styles';
+import { Alert } from 'react-native';
+import Loading from '../../components/Loading';
 
-const horarios = [
-  { time: '09:00', status: 'Reservado'},
-  { time: '09:30', status: 'Reservado'},
-  { time: '10:00', status: 'Reservado'},
-  { time: '10:30', status: 'Reservado'},
-  { time: '11:00', status: 'Reservado'},
-  { time: '11:30', status: 'Reservado'},
-  { time: '12:00', status: 'Reservado'},
-  { time: '12:30', status: 'Reservado'},
-  { time: '13:00', status: 'Reservado'},
-  { time: '13:30', status: 'Reservado'},
-  { time: '14:00', status: 'Reservado'},
-  { time: '14:30', status: 'Reservado'},
-  { time: '15:00', status: 'Reservado'},
-  { time: '15:30', status: 'Reservado'},
-]
-export default () => {
-  const timeInterval = '00:30';
-  let [fontsLoaded] = useFonts({
+const startHours = 9;
+const startMinutes = 0;
+const endHours = 19;
+const endMinutes = 0;
+const timeIntervalHours = 0;
+const timeIntervalMinutes = 30;
+
+export default props => {
+  const { loading, schedule, listSchedule } = useContext(ScheduleContext);
+  const [ selectedDay, setSelectedDay ] = useState(new Date());
+  const [ horarios, setHorarios ] = useState([]);
+
+  useFonts({
     Roboto_400Regular,
   });
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
+  useEffect(() => {
+    const params = props.route.params;
+    
+    list(params.professionalId, params.serviceId, selectedDay);
+    
+    return console.warn(params);
+  }, []);
+
+  const list = (professionalId, serviceId, selectedDay) => {
+    return Promise.resolve(listSchedule(professionalId, serviceId, toStringDate(selectedDay))).then(schedules => {
+      setHorarios(generateTimes(
+        startHours, 
+        startMinutes, 
+        endHours, 
+        endMinutes, 
+        timeIntervalHours, 
+        timeIntervalMinutes,
+        schedules
+      ));
+    });
+  }
+
+  const previousDay = async () => {
+    if (!isToday()) {
+      var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
+  
+      var previousDay = new Date(day);
+      previousDay.setDate(day.getDate() - 1);
+      setSelectedDay(previousDay);
+      list(props.route.params.professionalId, props.route.params.serviceId, previousDay);
+    }
+  }
+
+  const nextDay = async () => {
+    var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
+
+    var nextDay = new Date(day);
+    nextDay.setDate(day.getDate() + 1);
+    setSelectedDay(nextDay);
+    list(props.route.params.professionalId, props.route.params.serviceId, nextDay);
+  }
+
+  const arrowLeftColor = () => {
+    if (isToday()) {
+      return '#b5b5b5'
+    }
+    return '#323232'
+  }
+
+  const isToday = () => {
+    const today = new Date();
+    if (selectedDay.getFullYear() == today.getFullYear()
+    && selectedDay.getMonth() == today.getMonth()
+    && selectedDay.getDate() == today.getDate()) {
+      return true;
+    }
+    return false;
+  }
+
+  const isTomorrow = () => {
+    const today = new Date();
+    if (selectedDay.getFullYear() == today.getFullYear()
+    && selectedDay.getMonth() == today.getMonth()
+    && selectedDay.getDate() == today.getDate()+1) {
+      return true;
+    }
+    return false;
+  }
+
+  const getDayOfWeek = () => {
+    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const today = new Date();
+    if (isToday()) {
+      return 'Hoje';
+    } else if (isTomorrow()) {
+      return 'Amanhã';
+    } else {
+      return daysOfWeek[selectedDay.getDay()];
+    }
+  }
+
+  const confirmSchedule = (professionalId, serviceId, time) => {
+    Alert.alert(
+      "Agendar horário",
+      "Tem certeza que deseja agendar esse horário?",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Sim", onPress: () => { 
+          Promise.resolve(schedule(professionalId, serviceId, toStringDate(selectedDay), time)).then(() => {
+            list(professionalId, serviceId, selectedDay);
+          }) 
+        }}
+      ]
+    );
+  }
+
+  confirmScheduleAction = (status, professionalId, serviceId, time) => {
+    if (status === 'Reservado') {
+      return () => {};
+    } else {
+      return confirmSchedule(professionalId, serviceId, time);
+    }
+  }
+
+  if (loading) {
+    return <Loading />;
   } else {
     return (
       <Container>
         <Header>
           <Icon
+            onPress={ () => previousDay()}
             style={{marginLeft: 20}}
             name='arrow-left'
             type='font-awesome'
-            color='black' />
+            color={arrowLeftColor()} />
           <HeaderMidleArea>
-            <DayOfMonth style={{ fontFamily: 'Roboto_400Regular' }}>05 de novembro</DayOfMonth>
-            <DayOfWeek style={{ fontFamily: 'Roboto_400Regular' }}>Hoje</DayOfWeek>
+            <DayOfMonth style={{ fontFamily: 'Roboto_400Regular' }}>{getDataExtenso(selectedDay)}</DayOfMonth>
+            <DayOfWeek style={{ fontFamily: 'Roboto_400Regular' }}>{getDayOfWeek()}</DayOfWeek>
           </HeaderMidleArea>
           <Icon
+            onPress={ () => nextDay()}
             style={{marginRight: 20}}
             name='arrow-right'
             type='font-awesome'
-            color='black' />
+            color='#323232' />
         </Header>
         <ContainerCards>
           {horarios.map((horario, index) => {
             return (
-              <CardDay key={index} time={horario.time} status={horario.status} />
+              <CardDay 
+                onPressAction={ () => confirmScheduleAction(
+                  horario.status,
+                  props.route.params.professionalId, 
+                  props.route.params.serviceId, 
+                  horario.time
+                )} 
+                key={index} 
+                time={horario.time} 
+                status={horario.status}
+                color={horario.color} />
             );
           })}
         </ContainerCards>
