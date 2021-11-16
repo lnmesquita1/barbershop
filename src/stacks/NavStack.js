@@ -16,7 +16,12 @@ export default () => (
         <Stack.Screen options={{
       headerShown: false,
     }} name="Home" component={Home}/>
-        <Stack.Screen name="ServicosList" component={ServicosList}/>
+        <Stack.Screen 
+          name="ServicosList" 
+          component={ServicosList}
+          options={() => ({
+            headerTitle: 'Escolha um serviço'
+          })}/>
         <Stack.Screen name="ScheduleService" component={ScheduleService}/>
         <Stack.Screen
         name="ProfessionalsList"

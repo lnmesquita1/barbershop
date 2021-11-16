@@ -5,15 +5,22 @@ export const generateTimes = (
     endMinutes, 
     timeIntervalHours, 
     timeIntervalMinutes,
-    schedules
+    schedules,
+    selectedDay
     ) => {
   
   const horarios = [];
   const time = new Date();
+  time.setDate(selectedDay.getDate());
+  time.setMonth(selectedDay.getMonth());
+  time.setFullYear(selectedDay.getFullYear());
   time.setHours(startHours);
   time.setMinutes(startMinutes);
 
   const end = new Date();
+  end.setDate(selectedDay.getDate());
+  end.setMonth(selectedDay.getMonth());
+  end.setFullYear(selectedDay.getFullYear());
   end.setHours(endHours);
   end.setMinutes(endMinutes);
 

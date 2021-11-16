@@ -33,14 +33,11 @@ export default props => {
 
   useEffect(() => {
     const params = props.route.params;
-    
     list(params.professionalId, params.serviceId, selectedDay);
-    
-    return console.warn(params);
   }, []);
 
   const list = (professionalId, serviceId, selectedDay) => {
-    return Promise.resolve(listSchedule(professionalId, serviceId, toStringDate(selectedDay))).then(schedules => {
+    return Promise.resolve(listSchedule(professionalId, toStringDate(selectedDay))).then(schedules => {
       setHorarios(generateTimes(
         startHours, 
         startMinutes, 
@@ -48,7 +45,8 @@ export default props => {
         endMinutes, 
         timeIntervalHours, 
         timeIntervalMinutes,
-        schedules
+        schedules,
+        selectedDay
       ));
     });
   }
@@ -131,8 +129,8 @@ export default props => {
     );
   }
 
-  confirmScheduleAction = (status, professionalId, serviceId, time) => {
-    if (status === 'Reservado') {
+  const confirmScheduleAction = (status, professionalId, serviceId, time) => {
+    if (status === 'Reservado' || status === 'Passou') {
       return () => {};
     } else {
       return confirmSchedule(professionalId, serviceId, time);
