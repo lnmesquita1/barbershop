@@ -2,7 +2,16 @@ import React, { useEffect, useContext, useState } from 'react';
 import CardDay from '../../components/CardDay';
 import { Icon } from 'react-native-elements';
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
-import { getDataExtenso, generateTimes, toStringDate } from '../../shared/ScheduleUtil';
+import { 
+  getDataExtenso, 
+  generateTimes, 
+  toStringDate,
+  isToday,
+  previousDay,
+  nextDay,
+  arrowLeftColor,
+  getDayOfWeek
+} from '../../shared/ScheduleUtil';
 import { ScheduleContext } from '../../config/ScheduleProvider';
 import { 
   Container,
@@ -33,10 +42,10 @@ export default props => {
 
   useEffect(() => {
     const params = props.route.params;
-    list(params.professionalId, params.serviceId, selectedDay);
+    list(params.professionalId, selectedDay);
   }, []);
 
-  const list = (professionalId, serviceId, selectedDay) => {
+  const list = (professionalId, selectedDay) => {
     return Promise.resolve(listSchedule(professionalId, toStringDate(selectedDay))).then(schedules => {
       setHorarios(generateTimes(
         startHours, 
@@ -51,63 +60,18 @@ export default props => {
     });
   }
 
-  const previousDay = async () => {
-    if (!isToday()) {
-      var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
-  
-      var previousDay = new Date(day);
-      previousDay.setDate(day.getDate() - 1);
-      setSelectedDay(previousDay);
-      list(props.route.params.professionalId, props.route.params.serviceId, previousDay);
+  const setPreviousDay = async () => {
+    if (!isToday(selectedDay)) {
+      const previous = previousDay(selectedDay);
+      setSelectedDay(previous);
+      list(props.route.params.professionalId, previous);
     }
   }
 
-  const nextDay = async () => {
-    var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
-
-    var nextDay = new Date(day);
-    nextDay.setDate(day.getDate() + 1);
-    setSelectedDay(nextDay);
-    list(props.route.params.professionalId, props.route.params.serviceId, nextDay);
-  }
-
-  const arrowLeftColor = () => {
-    if (isToday()) {
-      return '#b5b5b5'
-    }
-    return '#323232'
-  }
-
-  const isToday = () => {
-    const today = new Date();
-    if (selectedDay.getFullYear() == today.getFullYear()
-    && selectedDay.getMonth() == today.getMonth()
-    && selectedDay.getDate() == today.getDate()) {
-      return true;
-    }
-    return false;
-  }
-
-  const isTomorrow = () => {
-    const today = new Date();
-    if (selectedDay.getFullYear() == today.getFullYear()
-    && selectedDay.getMonth() == today.getMonth()
-    && selectedDay.getDate() == today.getDate()+1) {
-      return true;
-    }
-    return false;
-  }
-
-  const getDayOfWeek = () => {
-    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    const today = new Date();
-    if (isToday()) {
-      return 'Hoje';
-    } else if (isTomorrow()) {
-      return 'Amanhã';
-    } else {
-      return daysOfWeek[selectedDay.getDay()];
-    }
+  const setNextDay = async () => {
+    const next = nextDay(selectedDay);
+    setSelectedDay(next);
+    list(props.route.params.professionalId, next);
   }
 
   const confirmSchedule = (professionalId, serviceId, time) => {
@@ -122,7 +86,7 @@ export default props => {
         },
         { text: "Sim", onPress: () => { 
           Promise.resolve(schedule(professionalId, serviceId, toStringDate(selectedDay), time)).then(() => {
-            list(professionalId, serviceId, selectedDay);
+            list(professionalId, selectedDay);
           }) 
         }}
       ]
@@ -144,17 +108,17 @@ export default props => {
       <Container>
         <Header>
           <Icon
-            onPress={ () => previousDay()}
+            onPress={ () => setPreviousDay()}
             style={{marginLeft: 20}}
             name='arrow-left'
             type='font-awesome'
-            color={arrowLeftColor()} />
+            color={arrowLeftColor(selectedDay)} />
           <HeaderMidleArea>
             <DayOfMonth style={{ fontFamily: 'Roboto_400Regular' }}>{getDataExtenso(selectedDay)}</DayOfMonth>
-            <DayOfWeek style={{ fontFamily: 'Roboto_400Regular' }}>{getDayOfWeek()}</DayOfWeek>
+            <DayOfWeek style={{ fontFamily: 'Roboto_400Regular' }}>{getDayOfWeek(selectedDay)}</DayOfWeek>
           </HeaderMidleArea>
           <Icon
-            onPress={ () => nextDay()}
+            onPress={ () => setNextDay()}
             style={{marginRight: 20}}
             name='arrow-right'
             type='font-awesome'

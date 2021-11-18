@@ -65,3 +65,55 @@ export const toStringDate = (date) => {
   const diaDoMes = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`;
   return `${date.getFullYear()}-${date.getMonth()}-${diaDoMes}`;
 }
+
+export const previousDay = (selectedDay) => {
+  var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
+  var previousDay = new Date(day);
+  previousDay.setDate(day.getDate() - 1);
+  return previousDay;
+}
+
+export const nextDay = (selectedDay) => {
+  var day = new Date(selectedDay.getFullYear(), selectedDay.getMonth(), selectedDay.getDate());
+  var nextDay = new Date(day);
+  nextDay.setDate(day.getDate() + 1);
+  return nextDay;
+}
+
+export const isToday = (selectedDay) => {
+  const today = new Date();
+  if (selectedDay.getFullYear() == today.getFullYear()
+  && selectedDay.getMonth() == today.getMonth()
+  && selectedDay.getDate() == today.getDate()) {
+    return true;
+  }
+  return false;
+}
+
+export const isTomorrow = (selectedDay) => {
+  const today = new Date();
+  if (selectedDay.getFullYear() == today.getFullYear()
+  && selectedDay.getMonth() == today.getMonth()
+  && selectedDay.getDate() == today.getDate()+1) {
+    return true;
+  }
+  return false;
+}
+
+export const getDayOfWeek = (selectedDay) => {
+  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  if (isToday(selectedDay)) {
+    return 'Hoje';
+  } else if (isTomorrow(selectedDay)) {
+    return 'Amanhã';
+  } else {
+    return daysOfWeek[selectedDay.getDay()];
+  }
+}
+
+export const arrowLeftColor = (selectedDay) => {
+  if (isToday(selectedDay)) {
+    return '#b5b5b5'
+  }
+  return '#323232'
+}

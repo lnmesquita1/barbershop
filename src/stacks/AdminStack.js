@@ -8,9 +8,8 @@ import ServicosEditAdmin from '../screens/ServicosEditAdmin';
 import ScheduleAdmin from '../screens/ScheduleAdmin';
 import ProfessionalsListAdmin from '../screens/ProfessionalsListAdmin';
 import ProfessionalsEditAdmin from '../screens/ProfessionalsEditAdmin';
-import { ServicesContext } from './../config/ServicesProvider';
+import ProfessionalsList from '../screens/ProfessionalsList';
 import styled from 'styled-components/native';
-import Loading from '../components/Loading';
 
 export const AddArea = styled.View`
     margin-right: 12px;
@@ -69,6 +68,12 @@ export default () => {
                 onPress={() => navigation.navigate('ProfessionalsEditAdmin')} />
             </AddArea>
           )
+        })} />
+      <Stack.Screen
+        name="ProfessionalsList"
+        component={ProfessionalsList}
+        options={() => ({
+          headerTitle: 'Escolha um profissional'
         })} />
       <Stack.Screen
         name="ProfessionalsEditAdmin"

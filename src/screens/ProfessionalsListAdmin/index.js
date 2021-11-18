@@ -16,16 +16,16 @@ export default props => {
   const { loading, listProfessionals, professionals, deleteProfessional } = useContext(ProfessionalsContext);
   const navigation = useNavigation();
   const onPressItem = (item) => navigation.navigate('ProfessionalsEditAdmin', {
-    professionalName: item.professionalName,
+    name: item.name,
+    lastName: item.lastName,
+    phoneNumber: item.phoneNumber,
+    email: item.email,
+    oldEmail: item.email,
     key: item.key
   });
 
   useEffect(() => {
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      listProfessionals();
-    });
-
-    return unsubscribe;
+    listProfessionals();
   }, []);
 
   if (loading) {
@@ -36,7 +36,7 @@ export default props => {
         <FlatList
           data={professionals}
           style={styles.list}
-          renderItem={({ item }) => <ListItemProfessional onPressAction={ () => onPressItem(item)} data={item} deleteAction={deleteProfessional} listAction={listProfessionals} />}
+          renderItem={({ item }) => <ListItemProfessional onPressAction={ () => onPressItem(item)} data={item} deleteAction={deleteProfessional} />}
           keyExtractor={(item) => item.key}
         />
       </Container>

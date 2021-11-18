@@ -59,7 +59,9 @@ export default () => {
       iconName: 'calendar',
       iconColor: '#fff',
       text: 'Agenda',
-      navigateAction: () => { navigation.navigate('ScheduleAdmin') } 
+      navigateAction: () => { navigation.navigate('ProfessionalsList', {
+        nextScreen: 'ScheduleAdmin'
+      }) } 
     },
     {
       iconName: 'cut',
