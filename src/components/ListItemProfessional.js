@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-const renderDeleteArea = (data, deleteAction, listAction) => {
+const renderDeleteArea = (data, deleteAction) => {
   if (deleteAction) {
     return (
       <View style={styles.trashArea}>
@@ -10,23 +10,21 @@ const renderDeleteArea = (data, deleteAction, listAction) => {
           name='trash'
           type='font-awesome'
           color='#fa5252'
-          onPress={() => deleteAction(data.key).then(() => {
-            listAction();
-          })} />
+          onPress={() => deleteAction(data.key, data.email)} />
       </View>
     );
   }
 }
 
-const ListItemProfessional = ({ data, deleteAction, listAction, onPressAction }) => {
+const ListItemProfessional = ({ data, deleteAction, onPressAction }) => {
   return (
     <TouchableOpacity onPress={onPressAction} style={styles.item}>
       <View style={styles.titleContainer}>
-        <Text style={styles.itemP1}>{data.professionalName}</Text>
+        <Text style={styles.itemP1}>{data.name}</Text>
       </View>
       <View style={styles.infoContainer}>
         {
-          renderDeleteArea(data, deleteAction, listAction)
+          renderDeleteArea(data, deleteAction)
         }
       </View>
     </TouchableOpacity>

@@ -61,13 +61,23 @@ export const AuthProvider = (props) => {
 							setLoading(false);
 						} else {
 							auth.createUserWithEmailAndPassword(email, password).then((userCredential) => {
-								database.ref('users/' + userCredential.user.uid).set({
-									username: name,
-									lastName: lastName,
-									phoneNumber: phoneNumber
-								});
-								getUserDetailsById(userCredential.user.uid);
-								setLoading(false);
+								let flagProfessional = null;
+                database.ref('professionals').orderByChild('email').equalTo(email).get().then(professional => {
+									if (professional.exists()) {
+                    flagProfessional = true;
+									}
+                  database.ref('users/' + userCredential.user.uid).set({
+                    username: name,
+                    lastName: lastName,
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    flagProfessional: flagProfessional
+                  });
+                  getUserDetailsById(userCredential.user.uid);
+                  setLoading(false);
+								}).catch(error => {
+                  setLoading(false);
+                });
 							}).catch(error => {
 								if (error.code.includes('invalid-email')) {
 									Alert.alert('Erro no cadastro', MESSAGES.INVALID_EMAIL);
