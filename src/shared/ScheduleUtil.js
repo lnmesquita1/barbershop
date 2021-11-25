@@ -25,10 +25,7 @@ export const generateTimes = (
   end.setMinutes(endMinutes);
 
   while (time.getTime() < end.getTime()) {
-    const hours = time.getHours() < 10 ? `0${time.getHours()}` : `${time.getHours()}`;
-    const minutes = time.getMinutes() < 10 ? `0${time.getMinutes()}` : `${time.getMinutes()}`;
-    const resultStatus = setStatusAndColor(time, schedules);
-    const horario = { time: `${hours}:${minutes}`, status: resultStatus.status, color: resultStatus.color};
+    const horario = scheduledTime(time, schedules)
     horarios.push(horario);
 
     time.setHours(time.getHours() + timeIntervalHours);
@@ -37,21 +34,40 @@ export const generateTimes = (
   return horarios;
 }
 
-const setStatusAndColor = (time, schedules) => {
+const scheduledTime = (time, schedules) => {
+  const hours = time.getHours() < 10 ? `0${time.getHours()}` : `${time.getHours()}`;
+  const minutes = time.getMinutes() < 10 ? `0${time.getMinutes()}` : `${time.getMinutes()}`;
   if (time.getTime() < new Date().getTime()) {
-    return { status: 'Passou', color: '#b5b5b5' };
-  } else if (isScheduled(time, schedules)) {
-    return { status: 'Reservado', color: '#b5b5b5' };
-  } else {
-    return { status: 'Disponível', color: '#AFE1AF' };
+    return { 
+      status: 'Passou', 
+      color: '#b5b5b5',
+      time: `${hours}:${minutes}`
+    };
   }
-}
-
-const isScheduled = (time, schedules) => {
-  return schedules.filter(schedule => {
+  const scheduled = schedules.filter(schedule => {
     return schedule.selectedTimeHours == time.getHours()
       && schedule.selectedTimeMinutes == time.getMinutes();
-  }).length > 0;
+  });
+  if (scheduled.length > 0) {
+    return {
+      status: 'Reservado', 
+      color: '#b5b5b5',
+      time: `${hours}:${minutes}`,
+      professionalName: scheduled[0].professionalName,
+      professionalLastName: scheduled[0].professionalLastName,
+      serviceName: scheduled[0].serviceName,
+      serviceValue: scheduled[0].serviceValue,
+      username: scheduled[0].username,
+      userLastName: scheduled[0].userLastName,
+      key: scheduled[0].key,
+      userId: scheduled[0].userId
+    };
+  }
+  return { 
+    status: 'Disponível', 
+    color: '#AFE1AF',
+    time: `${hours}:${minutes}`
+  };
 }
 
 export const getDataExtenso = (date) => {

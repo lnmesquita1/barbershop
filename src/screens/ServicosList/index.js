@@ -13,21 +13,28 @@ const styles = StyleSheet.create({
 
 export default props => {
   const { listService, services } = useContext(ServicesContext);
-  const [ professionalId, setProfessionalId ] = useState('');
+  const [ professionalData, setProfessionalData ] = useState('');
+  const [ time, setTime ] = useState('');
+  const [ selectedDay, setSelectedDay ] = useState('');
   const navigation = useNavigation();
-  const onPressItem = (item) => navigation.navigate('Schedule', {
-    professionalId,
-    serviceId: item.key
+  // Navigate to ScheduleCostumerAdmin or Schedule
+  const onPressItem = (item) => navigation.navigate(props.route.params.navigateTo, {
+    professionalData,
+    time,
+    selectedDay,
+    serviceData: { serviceId: item.key, serviceName: item.serviceName, serviceValue: item.serviceValue }
   });
 
   useEffect(() => {
     const params = props.route.params;
     if (params) {
-      setProfessionalId(params.professionalId);
+      setProfessionalData(params.professionalData);
+      setTime(params.time);
+      setSelectedDay(params.selectedDay);
     }
 
     const unsubscribe = props.navigation.addListener('focus', () => {
-      listService(true);
+      listService();
     });
 
     return unsubscribe;

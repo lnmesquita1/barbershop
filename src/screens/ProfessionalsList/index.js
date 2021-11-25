@@ -15,7 +15,8 @@ export default props => {
   const { listProfessionals, professionals } = useContext(ProfessionalsContext);
   const navigation = useNavigation();
   const onPressItem = (item) => navigation.navigate(props.route.params.nextScreen, {
-    professionalId: item.key
+    professionalData: { professionalId: item.key, name: item.name, lastName: item.lastName },
+    navigateTo: 'Schedule'
   });
 
   useEffect(() => {

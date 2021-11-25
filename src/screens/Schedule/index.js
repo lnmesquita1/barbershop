@@ -13,6 +13,7 @@ import {
   getDayOfWeek
 } from '../../shared/ScheduleUtil';
 import { ScheduleContext } from '../../config/ScheduleProvider';
+import { AuthContext } from '../../config/AuthProvider';
 import { 
   Container,
   ContainerCards,
@@ -32,7 +33,8 @@ const timeIntervalHours = 0;
 const timeIntervalMinutes = 30;
 
 export default props => {
-  const { loading, schedule, listSchedule } = useContext(ScheduleContext);
+  const { loading, schedule, listSchedule, cancelSchedule } = useContext(ScheduleContext);
+  const { userDetails } = useContext(AuthContext);
   const [ selectedDay, setSelectedDay ] = useState(new Date());
   const [ horarios, setHorarios ] = useState([]);
 
@@ -42,7 +44,7 @@ export default props => {
 
   useEffect(() => {
     const params = props.route.params;
-    list(params.professionalId, selectedDay);
+    list(params.professionalData.professionalId, selectedDay);
   }, []);
 
   const list = (professionalId, selectedDay) => {
@@ -64,17 +66,17 @@ export default props => {
     if (!isToday(selectedDay)) {
       const previous = previousDay(selectedDay);
       setSelectedDay(previous);
-      list(props.route.params.professionalId, previous);
+      list(props.route.params.professionalData.professionalId, previous);
     }
   }
 
   const setNextDay = async () => {
     const next = nextDay(selectedDay);
     setSelectedDay(next);
-    list(props.route.params.professionalId, next);
+    list(props.route.params.professionalData.professionalId, next);
   }
 
-  const confirmSchedule = (professionalId, serviceId, time) => {
+  const confirmSchedule = (professionalData, serviceData, time) => {
     Alert.alert(
       "Agendar horário",
       "Tem certeza que deseja agendar esse horário?",
@@ -85,20 +87,44 @@ export default props => {
           style: "cancel"
         },
         { text: "Sim", onPress: () => { 
-          Promise.resolve(schedule(professionalId, serviceId, toStringDate(selectedDay), time)).then(() => {
-            list(professionalId, selectedDay);
+          Promise.resolve(schedule(professionalData, serviceData, userDetails, toStringDate(selectedDay), time)).then(() => {
+            list(professionalData.professionalId, selectedDay);
           }) 
         }}
       ]
     );
   }
 
-  const confirmScheduleAction = (status, professionalId, serviceId, time) => {
-    if (status === 'Reservado' || status === 'Passou') {
+  const confirmScheduleAction = (horario, professionalData, serviceData) => {
+    if (horario.status === 'Passou') {
+      return () => {};
+    } else if (horario.status === 'Reservado' && userDetails.key === horario.userId) {
+      return askToCancelSchedule(horario, professionalData, serviceData);
+    } else if (horario.status === 'Reservado') {
       return () => {};
     } else {
-      return confirmSchedule(professionalId, serviceId, time);
+      return confirmSchedule(professionalData, serviceData, horario.time);
     }
+  }
+
+  const askToCancelSchedule = (horario, professionalData, serviceData) => {
+    Alert.alert(
+      "Deseja cancelar o agendamento?",
+      `Nome do profissional: ${horario.professionalName} ${horario.professionalLastName} \n Hora: ${horario.time} \n Serviço: ${horario.serviceName} \n Valor: R$ ${horario.serviceValue}`,
+      [
+        {
+          text: "Não",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Sim", onPress: () => {
+            Promise.resolve(cancelSchedule(professionalData, serviceData, userDetails, toStringDate(selectedDay), horario.time, horario.key)).then(() => {
+              list(professionalData.professionalId, selectedDay);
+            });
+          } 
+        }
+      ]
+    );
   }
 
   if (loading) {
@@ -129,10 +155,9 @@ export default props => {
             return (
               <CardDay 
                 onPressAction={ () => confirmScheduleAction(
-                  horario.status,
-                  props.route.params.professionalId, 
-                  props.route.params.serviceId, 
-                  horario.time
+                  horario,
+                  props.route.params.professionalData, 
+                  props.route.params.serviceData
                 )} 
                 key={index} 
                 time={horario.time} 

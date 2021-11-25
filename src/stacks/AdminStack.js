@@ -9,6 +9,8 @@ import ScheduleAdmin from '../screens/ScheduleAdmin';
 import ProfessionalsListAdmin from '../screens/ProfessionalsListAdmin';
 import ProfessionalsEditAdmin from '../screens/ProfessionalsEditAdmin';
 import ProfessionalsList from '../screens/ProfessionalsList';
+import ScheduleCostumerAdmin from '../screens/ScheduleCostumerAdmin';
+import ServicosList from '../screens/ServicosList';
 import styled from 'styled-components/native';
 
 export const AddArea = styled.View`
@@ -74,6 +76,18 @@ export default () => {
         component={ProfessionalsList}
         options={() => ({
           headerTitle: 'Escolha um profissional'
+        })} />
+      <Stack.Screen
+        name="ServicosList"
+        component={ServicosList}
+        options={() => ({
+          headerTitle: 'Escolha um serviço'
+        })} />
+      <Stack.Screen
+        name="ScheduleCostumerAdmin"
+        component={ScheduleCostumerAdmin}
+        options={() => ({
+          headerTitle: 'Agendar para cliente'
         })} />
       <Stack.Screen
         name="ProfessionalsEditAdmin"
