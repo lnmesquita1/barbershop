@@ -15,7 +15,9 @@ export const AuthProvider = (props) => {
 		const dbRef = database.ref();
 		await dbRef.child("users").child(userId).get().then((snapshot) => {
 			if (snapshot.exists()) {
-				setUserDetails(snapshot.val());
+        const details = snapshot.val();
+        details.key = userId;
+				setUserDetails(details);
 			} else {
 				setUserDetails(null);
 			}

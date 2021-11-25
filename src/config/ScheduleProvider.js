@@ -11,15 +11,58 @@ export const ScheduleProvider = (props) => {
       value={{
         loading,
         schedules,
-        schedule: (idProfessional, idServico, selectedDay, selectedTime) => {
+        schedule: (professionalData, serviceData, userDetails, selectedDay, selectedTime) => {
           try {
             setLoading(true);
             const selectedTimeHours = Number(selectedTime.split(':')[0]);
             const selectedTimeMinutes = Number(selectedTime.split(':')[1]);
-            const key = database.ref(`schedule/${idProfessional}/${selectedDay}/${idServico}`).push().key;
-            database.ref(`schedule/${idProfessional}/${selectedDay}/${idServico}/${key}`).set({
+            const key = database.ref(`schedule/${professionalData.professionalId}/${selectedDay}/${serviceData.serviceId}/`).push().key;
+            database.ref(`schedule/${professionalData.professionalId}/${selectedDay}/${serviceData.serviceId}/${key}`).set({
               selectedTimeHours,
-              selectedTimeMinutes
+              selectedTimeMinutes,
+              professionalName: professionalData.name,
+              professionalLastName: professionalData.lastName,
+              serviceName: serviceData.serviceName,
+              serviceValue: serviceData.serviceValue,
+              username: userDetails.username,
+              userLastName: userDetails.lastName,
+              userId: userDetails.key,
+              flagActive: true
+            }).then(() => {
+              const userScheduleKey = database.ref(`userSchedule/${userDetails.key}/`).push().key;
+              database.ref(`userSchedule/${userDetails.key}/${userScheduleKey}`).set({
+                professionalId: professionalData.professionalId,
+                day: selectedDay,
+                serviceId: serviceData.serviceId,
+                scheduleKey: key,
+              }).then(() => {
+                setLoading(false);
+              }).catch(() => {
+                setLoading(false);
+              })
+            }).catch(() => {
+              setLoading(false);
+            });
+          } catch (error) {
+            console.warn(error);
+            setLoading(false);
+          }
+        },
+        scheduleByAdminOrProfessional: (professionalData, serviceData, costumerName, selectedDay, selectedTime) => {
+          try {
+            setLoading(true);
+            const selectedTimeHours = Number(selectedTime.split(':')[0]);
+            const selectedTimeMinutes = Number(selectedTime.split(':')[1]);
+            const key = database.ref(`schedule/${professionalData.professionalId}/${selectedDay}/${serviceData.serviceId}/`).push().key;
+            database.ref(`schedule/${professionalData.professionalId}/${selectedDay}/${serviceData.serviceId}/${key}`).set({
+              selectedTimeHours,
+              selectedTimeMinutes,
+              professionalName: professionalData.name,
+              professionalLastName: professionalData.lastName,
+              serviceName: serviceData.serviceName,
+              serviceValue: serviceData.serviceValue,
+              username: costumerName,
+              flagActive: true
             }).then(() => {
               setLoading(false);
             }).catch(() => {
@@ -40,7 +83,9 @@ export const ScheduleProvider = (props) => {
                   const keys = Object.keys(value);
                   Object.values(value).map((item, index) => {
                     item.key = keys[index];
-                    items.push(item)
+                    if (item.flagActive) {
+                      items.push(item);
+                    }
                   });
                 })
               }
@@ -54,7 +99,33 @@ export const ScheduleProvider = (props) => {
             setLoading(false);
             return null;
           }
-        }
+        },
+        cancelSchedule: (professionalData, serviceData, userDetails, selectedDay, selectedTime, key) => {
+          try {
+            setLoading(true);
+            const selectedTimeHours = Number(selectedTime.split(':')[0]);
+            const selectedTimeMinutes = Number(selectedTime.split(':')[1]);
+            database.ref(`schedule/${professionalData.professionalId}/${selectedDay}/${serviceData.serviceId}/${key}`).set({
+              selectedTimeHours,
+              selectedTimeMinutes,
+              professionalName: professionalData.name,
+              professionalLastName: professionalData.lastName,
+              serviceName: serviceData.serviceName,
+              serviceValue: serviceData.serviceValue,
+              username: userDetails.username,
+              userLastName: userDetails.lastName,
+              userId: userDetails.key,
+              flagActive: false
+            }).then(() => {
+              setLoading(false);
+            }).catch(() => {
+              setLoading(false);
+            });
+          } catch (error) {
+            console.warn(error);
+            setLoading(false);
+          }
+        },
       }}>
       {props.children}
     </ScheduleContext.Provider>

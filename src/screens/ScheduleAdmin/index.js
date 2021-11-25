@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
+import { useNavigation } from '@react-navigation/core';
 import CardDay from '../../components/CardDay';
 import { Icon } from 'react-native-elements';
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
@@ -32,7 +33,8 @@ const timeIntervalHours = 0;
 const timeIntervalMinutes = 30;
 
 export default props => {
-  const { loading, schedule, listSchedule } = useContext(ScheduleContext);
+  const navigation = useNavigation();
+  const { loading, listSchedule } = useContext(ScheduleContext);
   const [ selectedDay, setSelectedDay ] = useState(new Date());
   const [ horarios, setHorarios ] = useState([]);
 
@@ -42,7 +44,9 @@ export default props => {
 
   useEffect(() => {
     const params = props.route.params;
-    list(params.professionalId, selectedDay);
+    props.navigation.addListener('focus', () => {
+      list(params.professionalData.professionalId, selectedDay);
+    });
   }, []);
 
   const list = (professionalId, selectedDay) => {
@@ -64,41 +68,42 @@ export default props => {
     if (!isToday(selectedDay)) {
       const previous = previousDay(selectedDay);
       setSelectedDay(previous);
-      list(props.route.params.professionalId, previous);
+      list(props.route.params.professionalData.professionalId, previous);
     }
   }
 
   const setNextDay = async () => {
     const next = nextDay(selectedDay);
     setSelectedDay(next);
-    list(props.route.params.professionalId, next);
+    list(props.route.params.professionalData.professionalId, next);
   }
 
-  const confirmSchedule = (professionalId, serviceId, time) => {
+  const cardPress = (horario) => {
+    switch (horario.status) {
+      case 'Disponível':
+        return schedule(horario);
+      case 'Reservado':
+        return readScheduledTime(horario);
+      default:
+        return () => {};
+    }
+  }
+
+  const schedule = (horario) => navigation.navigate('ServicosList', {
+    professionalData: props.route.params.professionalData,
+    time: horario.time,
+    selectedDay: toStringDate(selectedDay),
+    navigateTo: 'ScheduleCostumerAdmin'
+  });
+
+  const readScheduledTime = (horario) => {
     Alert.alert(
-      "Agendar horário",
-      "Tem certeza que deseja agendar esse horário?",
+      "Agendamento",
+      `Nome do cliente: ${horario.username} ${horario.userLastName ? horario.userLastName : ''} \n Hora: ${horario.time} \n Serviço: ${horario.serviceName}`,
       [
-        {
-          text: "Cancelar",
-          onPress: () => {},
-          style: "cancel"
-        },
-        { text: "Sim", onPress: () => { 
-          Promise.resolve(schedule(professionalId, serviceId, toStringDate(selectedDay), time)).then(() => {
-            list(professionalId, selectedDay);
-          }) 
-        }}
+        { text: "Ok", onPress: () => {} }
       ]
     );
-  }
-
-  const confirmScheduleAction = (status, professionalId, serviceId, time) => {
-    if (status === 'Reservado' || status === 'Passou') {
-      return () => {};
-    } else {
-      return confirmSchedule(professionalId, serviceId, time);
-    }
   }
 
   if (loading) {
@@ -128,7 +133,7 @@ export default props => {
           {horarios.map((horario, index) => {
             return (
               <CardDay 
-                onPressAction={ () => {}} 
+                onPressAction={ () => cardPress(horario)} 
                 key={index} 
                 time={horario.time} 
                 status={horario.status}
