@@ -17,6 +17,12 @@ export default () => (
         <Stack.Screen options={{
       headerShown: false,
     }} name="SignIn" component={SignIn}/>
-        <Stack.Screen name="SignUp" component={SignUp}/>
+        <Stack.Screen 
+          name="SignUp" 
+          component={SignUp}
+          options={() => ({
+            headerTitle: 'Crie sua conta',
+            headerBackTitle: 'Voltar'
+          })}/>
     </Stack.Navigator>
 )
