@@ -49,7 +49,6 @@ export default () => {
                 </InputArea>
 
                 {/* <Image style={styles.mustache} source={require('../../assets/mustache.png')} /> */}
-                <SocialMediaLogin/>
                 <SignMessageButton onPress={() => navigation.navigate('SignUp')}>
                     <SignMessageButtonText>Ainda não possui uma conta?</SignMessageButtonText>
                     <SignMessageButtonTextBold> Cadastre-se</SignMessageButtonTextBold>
