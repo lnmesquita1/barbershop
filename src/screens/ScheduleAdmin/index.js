@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import { useNavigation } from '@react-navigation/core';
 import CardDay from '../../components/CardDay';
 import { Icon } from 'react-native-elements';
+import { useIsFocused } from "@react-navigation/native";
 import { useFonts, Roboto_400Regular } from '@expo-google-fonts/roboto';
 import { 
   getDataExtenso, 
@@ -42,12 +43,13 @@ export default props => {
     Roboto_400Regular,
   });
 
+  const isFocused = useIsFocused();
   useEffect(() => {
-    const params = props.route.params;
-    props.navigation.addListener('focus', () => {
+    if(isFocused){ 
+      const params = props.route.params;
       list(params.professionalData.professionalId, selectedDay);
-    });
-  }, []);
+    }
+  }, [props, isFocused]);
 
   const list = (professionalId, selectedDay) => {
     return Promise.resolve(listSchedule(professionalId, toStringDate(selectedDay))).then(schedules => {
