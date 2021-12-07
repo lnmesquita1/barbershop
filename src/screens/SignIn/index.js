@@ -13,8 +13,6 @@ import {
 } from './styles';
 
 import SignInput from '../../components/SignInput';
-import background from '../../assets/background.jpg';
-import SocialMediaLogin from '../../components/SocialMediaLogin';
 
 export default () => {
 
